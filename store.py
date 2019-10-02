@@ -6,8 +6,10 @@ try:
     from flask import render_template, Flask, url_for, redirect, request, session
     from requests import ReadTimeout, RequestException
     from smtplib import SMTP_SSL as SMTP
-    from pymongo import MongoClient
-    from bson.objectid import ObjectId
+    # from pymongo import MongoClient
+    # from bson.objectid import ObjectId
+    from email.mime.multipart import MIMEMultipart
+    from email.mime.text import MIMEText
 
 except ImportError as error:
     print(error, file=sys.stderr)
@@ -35,7 +37,7 @@ finally:
 
 portnum = 8080
 app = Flask(__name__)  # app name
-db = MongoClient(app)  # db
+# db = MongoClient(app)  # db
 
 
 @app.route('/', methods=['GET'])
@@ -66,24 +68,34 @@ def email():
     TLS_ports = {"lower_port": 25, "mid_port": 587,
                  "high_port": 2525}
     debug_level = 3
+    mail_content = """Hello,
+        This is a simple mail. There is only text, no attachments are there The mail is sent using Python SMTP library.
+        Thank You"""
 
     try:
         server = SMTP(server['gmail'], SSL_ports['lower_port'])
         # set the debug level
         server.set_debuglevel(debug_level)
         # identify ourselves to smtp gmail client
-        server.ehlo()
+
         username = 'gary.frederick@smash.lpfi.org'
         password = os.environ['email_password']
+        receiver = request.form['email']
+        message = MIMEMultipart()
+        message['From'] = username
+        message['To'] = receiver
+        # The subject line
+        message['Subject'] = 'A test mail sent by Python. It has an attachment.'
+        # The body and the attachments for the mail
+        message.attach(MIMEText(mail_content, 'plain'))
+        sys.stdout.write('\x1b[1;32m' + receiver + '\x1b[0m' + '\n')
+        server.ehlo()
         server.login(username, password)
+        text = message.as_string()
         sys.stdout.write(
             '\x1b[1;32m' + " [+] Connection successful" + '\x1b[0m' + '\n')
 
-        receiver = request.form['email']
-        print(receiver)
-        sys.stdout.write('\x1b[1;32m' + receiver + '\x1b[0m' + '\n')
-        msg = "You have subscribed to our news letter"
-        server.sendmail(username, receiver, msg)
+        server.sendmail(username, receiver, text)
         server.close()
 
     except:
