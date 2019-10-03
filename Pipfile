@@ -11,6 +11,8 @@ requests = "*"
 smtplib = "*"
 flask = "*"
 pymongo = "*"
+flask-mongoengine = "*"
+bcrypt = "*"
 
 [requires]
 python_version = "3.7"
