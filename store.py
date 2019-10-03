@@ -3,13 +3,21 @@ import os
 import socket
 
 try:
-    from flask import render_template, Flask, url_for, redirect, request, session
+    from flask import render_template, Flask, url_for, redirect, request, session, abort
+    # from flask.ext.login import (current_user, login_required,
+    #                              login_user, logout_user, confirm_login, fresh_login_required)
     from requests import ReadTimeout, RequestException
+    from flask_mongoengine import MongoEngine
     from smtplib import SMTP_SSL as SMTP
-    # from pymongo import MongoClient
-    # from bson.objectid import ObjectId
+    from pymongo import MongoClient
+    from bson.objectid import ObjectId
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
+    import bcrypt
+    from datetime import datetime
+    # from models import User
+    # import forms
+
 
 except ImportError as error:
     print(error, file=sys.stderr)
@@ -37,21 +45,40 @@ finally:
 
 portnum = 8080
 app = Flask(__name__)  # app name
-# db = MongoClient(app)  # db
+
+os.environ['MONGODB_URI'] = 'mongodb://localhost/'  # set environment variable
+host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
+app.config['MONGODB_URI'] = host
+client = MongoClient(host=f'{host}?retryWrites=false')
+db = client.get_default_database('test')
+
+try:
+    os.environ['MONGODB_URI']
+except KeyError as error:
+    print(error)
 
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    return render_template('index.html')
+    if not session.get('logged_in'):
+        return render_template('index.html')
+    else:
+        return render_template('dashboard.html')
 
 
 @app.route('/register', methods=['GET', 'POST'])
-def login():
-    user = {
-        'email': request.form.get('email'),
-        'password': request.form.get('password'),
-    }
+def register():
+    if request.method == 'POST':
+
+        userObject = {
+            'email': str(request.form['email']),
+            'password': request.form['password']
+
+        }
+        user = db.create_collection(userObject)
+        sys.stdout.write(user)
+        return user
 
     return render_template('register.html')
 
@@ -64,13 +91,8 @@ def email():
     }
     # SSL connection port numbers
     SSL_ports = {"lower_port": 465, "high_port": 25025}
-    # TLS connection port numbers
-    TLS_ports = {"lower_port": 25, "mid_port": 587,
-                 "high_port": 2525}
     debug_level = 3
-    mail_content = """Hello,
-        This is a simple mail. There is only text, no attachments are there The mail is sent using Python SMTP library.
-        Thank You"""
+    mail_content = """Thank you for subscribing to our newsletter :) """
 
     try:
         server = SMTP(server['gmail'], SSL_ports['lower_port'])
@@ -78,14 +100,14 @@ def email():
         server.set_debuglevel(debug_level)
         # identify ourselves to smtp gmail client
 
-        username = 'gary.frederick@smash.lpfi.org'
+        username = os.environ['email']
         password = os.environ['email_password']
         receiver = request.form['email']
         message = MIMEMultipart()
         message['From'] = username
         message['To'] = receiver
         # The subject line
-        message['Subject'] = 'A test mail sent by Python. It has an attachment.'
+        message['Subject'] = '(Important) E-store NewsLetter'
         # The body and the attachments for the mail
         message.attach(MIMEText(mail_content, 'plain'))
         sys.stdout.write('\x1b[1;32m' + receiver + '\x1b[0m' + '\n')
