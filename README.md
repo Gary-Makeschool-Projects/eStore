@@ -16,4 +16,5 @@ Simple e-store.
 ## Optional:
 
 If you want to use the email functionality on your local machine set envoirment variables `export email:yourgmailacocunt` `export email_password=yourgmailpassword`. After your enviornment variables are set allow applications to connect to gmails smtp server using your credentials by going to `https://myaccount.google.com/lesssecureapps` and allowing less secure apps to connect.
+
 <img src="/static/imgs/mail.png" width="55%"></img>
