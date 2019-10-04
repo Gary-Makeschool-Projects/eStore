@@ -13,6 +13,7 @@ flask = "*"
 pymongo = "*"
 flask-mongoengine = "*"
 bcrypt = "*"
+json = "*"
 
 [requires]
 python_version = "3.7"
