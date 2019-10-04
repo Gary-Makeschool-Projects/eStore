@@ -69,13 +69,16 @@
                 <div class="wrap-login100 p-t-50 p-b-90">
                     <form
                         method='POST'
-                        action={{ url_for('register') }}
+                        action={{url_for('register') }}
                         class="login100-form validate-form flex-sb flex-w"
                     >
                         <span class="login100-form-title p-b-51">
                             Sign Up
                         </span>
-
+                        {% if user_exists %}
+                        <script> alert('That email exists already') </script>
+                        <p style="color:red;">That email has already been used</p>
+                        {% endif %}
                         <div
                             class="wrap-input100 validate-input m-b-16"
                             data-validate="Username is required"
