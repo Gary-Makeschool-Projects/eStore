@@ -9,6 +9,7 @@ try:
     from smtplib import SMTP_SSL as SMTP
     from pymongo import MongoClient
     from bson.objectid import ObjectId
+    from bson import json_util
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
     import bcrypt
@@ -79,10 +80,11 @@ try:
                 400:
                     description:
         """
-        if not session.get('logged_in'):
+        user = session.get('user', None)
+        if user:
             return render_template('index.html')
         else:
-            return render_template('dashboard.html')
+            return render_template('index.html')
 
     @app.route('/register', methods=['GET', 'POST'])
     def register():
@@ -106,23 +108,67 @@ try:
                     description:
         """
         if request.method == 'POST':
-            new_user = User(request.form['email'], request.form['password'])
-            new_user.server_ip = request.environ['REMOTE_ADDR']
-            new_user.client_ip = request.environ.get(
-                'HTTP_X_REAL_IP', request.remote_addr)
             # if we find a user in the database return that user exists and redirect the client to the register form with an error message
             if user.find_one({"email": request.form['email']}):
                 user_exists = True
                 flash('user already exists')
                 return redirect(url_for('register', user_exists=user_exists))
             else:
-               # if the user doesnt exist add to the user collection and return the id of the user
+               # if the user doesnt exist add to the user collection and return the users dashboard
+                # create new user object with credetials
+                new_user = User(
+                    request.form['email'], request.form['password'])
+                new_user.server_ip = request.environ['REMOTE_ADDR']
+                new_user.client_ip = request.environ.get(
+                    'HTTP_X_REAL_IP', request.remote_addr)
+
+                # insert new user collection to data base
                 user.insert_one(new_user.json())
-                user_id = user.find_one({"email": new_user.get_email})
+                # define current user as the new collection
+                current_user = user.find_one({"email": request.form['email']})
 
-                return str(user_id)
+                data = {
+                    'username': current_user['email'],
+                    'id': current_user['_id'],
+                    'created': current_user['created_at'],
+                    'furniture': current_user['cart'],
+                    'ip': current_user['client_ip']
+                }
+                # create the session with user id
+                session['user'] = json.loads(json_util.dumps(data))
+                return render_template('user_index.html', session=session['user'])
 
+        # if GET method retrun register HTML
         return render_template('register.html')
+
+    @app.route('/logout', methods=['GET'])
+    def logout():
+        session.clear()
+        return render_template('index.html')
+
+    @app.route('/login', methods=['GET', 'POST'])
+    def login():
+        if request.method == 'POST':
+            login_user = user.find_one({'email': request.form['email']})
+            if login_user:
+                if bcrypt.hashpw(request.form['password'].encode('utf-8'), login_user['password']) == login_user['password']:
+                    data = {
+                        'id': login_user['_id'],
+                        'created': login_user['created_at'],
+                        'items': login_user['cart'],
+                        'ip': login_user['client_ip']
+                    }
+
+                    session['user'] = json.loads(json_util.dumps(data))
+                    return render_template('user_index.html', session=session['user'])
+                else:
+                    return render_template('login.html', fail='incorrect credentials')
+
+            else:
+                return render_template('login.html', fail='incorrect credentials')
+        if request.method == 'GET':
+            return render_template('login.html')
+        return render_template('login.html')
 
     @app.route('/email', methods=['POST'])
     def email():
@@ -179,8 +225,16 @@ except NameError:
     pass
 
 
+@app.route('/add')
+def add():
+    """
+    """
+    pass
+
+
 if __name__ == "__main__":
     try:
+        app.secret_key = os.urandom(24)
         app.run(debug=True, port=portnum)
     except NameError:
         pass

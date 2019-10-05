@@ -25,14 +25,18 @@ class User(object):
             'password': self.password,
             'created_at': self.timestamp,
             'server_ip': self.server_ip,
-            'client_ip': self.client_ip
+            'client_ip': self.client_ip,
+            'cart': self.cart
 
         }
+
+    def add_furniture(self, Furniture):
+        self.cart.append(Furniture)
 
 
 class Furniture(object):
     def __init__(self, src):
-        self.path = path
+        self.path = src
 
     def get_path(self):
         return self.path
