@@ -51,7 +51,7 @@ except NameError as error:
 
 try:
 
-    portnum = 8080  # custom port number
+    # portnum = 8080  # custom port number
     # set environment variable
     os.environ['MONGODB_URI'] = 'mongodb://localhost/contractor'
     host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
@@ -178,8 +178,8 @@ try:
 
         # if GET method retrun register HTML
         return render_template('register.html')
-    @app.route(/'google4c996636e0586db0.html')
-        return render_template('google4c996636e0586db0.html')
+    # @app.route(/'google4c996636e0586db0.html')
+    #     return render_template('google4c996636e0586db0.html')
     @app.route('/logout', methods=['GET'])
     def logout():
         session.clear()
