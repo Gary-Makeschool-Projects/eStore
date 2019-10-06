@@ -13,7 +13,6 @@ try:
     )
     import requests
     from oauthlib.oauth2 import WebApplicationClient
-    from flask_mongoengine import MongoEngine
     from smtplib import SMTP_SSL as SMTP
     from pymongo import MongoClient
     from bson.objectid import ObjectId
@@ -108,11 +107,11 @@ try:
                 400:
                     description:
         """
-        # userdata = session.get('user', None)
-        # if userdata:
-        #     return render_template('user_index.html')
-        # else:
-        return render_template('index.html')
+        userdata = session.get('user', None)
+        if userdata:
+            return render_template('user_index.html')
+        else:
+            return render_template('index.html')
 
     @app.route('/register', methods=['GET', 'POST'])
     def register():
@@ -262,7 +261,7 @@ try:
             return "User email not available or not verified by Google.", 400
 
         # Doesn't exist? Add it to the database.
-         new_user = User(email=users_email, password='test')
+        new_user = User(email=users_email, password='test')
 
         # Begin user session by logging the user in
         login_user(new_user)
