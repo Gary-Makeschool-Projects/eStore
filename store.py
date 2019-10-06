@@ -53,8 +53,8 @@ try:
 
     # portnum = 8080  # custom port number
     # set environment variable
-    os.environ['MONGODB_URI'] = 'mongodb://localhost/contractor'
-    host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
+    os.environ['MONGODB_URI'] = 'mongodb://127.0.0.1/contractor'
+    host = os.environ.get('MONGODB_URI', 'mongodb://127.0.0.1:27017/')
     app.config['MONGODB_URI'] = host
     # Set the session cookie to be secure
     app.config['SESSION_COOKIE_SECURE'] = True
@@ -90,7 +90,7 @@ try:
     client = MongoClient(host=f'{host}?retryWrites=false')
     db = client.get_default_database()    # get default database name
     user = db.user  # user collection
-    furniture = db.furniture
+    furniture = db.furniture  # furniture collection
 
     @app.route('/', methods=['GET'])
     @app.route('/index', methods=['GET'])
@@ -144,7 +144,7 @@ try:
         if request.method == 'POST':
             # if we find a user in the database return that user exists and redirect the client to the register form with an error message
             if user.find_one({"email": request.form['email']}):
-                user_exists = Truez
+                user_exists = True
                 return redirect(url_for('register'))
             else:
                # if the user doesnt exist add to the user collection and return the users dashboard
@@ -170,17 +170,20 @@ try:
                     'ip': current_user['client_ip'],
                     'cart_ammount': len(current_user['cart'])
                 }
-                # create the session with session model
+                # serialize and create the session with session model
                 session['user'] = json.loads(json_util.dumps(data))
-
+                # return user dashboard
                 return render_template('user_index.html', cart_ammount=session['user']['cart_amount'], username=session['user']['username'])
 
         # if GET method retrun register HTML
         return render_template('register.html')
+    # google verification route
     # @app.route(/'google4c996636e0586db0.html')
     #     return render_template('google4c996636e0586db0.html')
+
     @app.route('/logout', methods=['GET'])
     def logout():
+
         session.clear()
         return render_template('index.html')
 
@@ -215,11 +218,10 @@ try:
 
     @app.route("/google")
     def google():
-        # Find out what URL to hit for Google login
+        # find out what URL to hit for Google login
         google_provider_cfg = get_google_provider_cfg()
         authorization_endpoint = google_provider_cfg["authorization_endpoint"]
 
-        # Use library to construct the request for Google login and provide
         # scopes that let you retrieve user's profile from Google
         request_uri = auth.prepare_request_uri(
             authorization_endpoint,
@@ -230,7 +232,7 @@ try:
 
     @app.route("/google/callback")
     def callback():
-        # Get authorization code Google sent back to you
+        # Get authorization code Google sent back
         code = request.args.get("code")
         # Find out what URL to hit to get tokens that allow you to ask for
         # things on behalf of a user
@@ -252,9 +254,7 @@ try:
 
         # Parse the tokens!
         auth.parse_request_body_response(json.dumps(token_response.json()))
-        # Now that you have tokens (yay) let's find and hit the URL
-        # from Google that gives you the user's profile information,
-        # including their Google profile image and email
+        # user's profile information, including their Google profile image and email
         userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
         uri, headers, body = auth.add_token(userinfo_endpoint)
         userinfo_response = requests.get(uri, headers=headers, data=body)
@@ -266,9 +266,8 @@ try:
         else:
             return "User email not available or not verified by Google.", 400
 
-        new_user = User(email=users_email, password='test')
-
         # Doesn't exist? Add it to the database.
+         new_user = User(email=users_email, password='test')
 
         # Begin user session by logging the user in
         login_user(new_user)
