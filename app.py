@@ -50,7 +50,6 @@ app = Flask(__name__)  # app name
 os.environ['MONGO_URI'] = 'mongodb://localhost:27017/contractor'
 host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
 app.config['MONGO_URI'] = host
-app.config['secret_key'] = os.urandom(24)
 os.environ['secret_key'] = os.urandom(24)
 
 
