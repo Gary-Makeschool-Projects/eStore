@@ -8,12 +8,10 @@ autopep8 = "*"
 
 [packages]
 requests = "*"
-smtplib = "*"
 flask = "*"
 pymongo = "*"
 flask-mongoengine = "*"
 bcrypt = "*"
-json = "*"
 scrapy = "*"
 oauthlib = "*"
 pyopenssl = "*"
