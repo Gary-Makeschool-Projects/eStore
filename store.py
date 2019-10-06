@@ -346,7 +346,7 @@ except NameError:
 if __name__ == "__main__":
     try:
         app.secret_key = os.urandom(24)
-        app.run(ssl_context="adhoc", debug=True, host='0.0.0.0',
+        app.run(debug=True, host='0.0.0.0',
                 port=os.environ.get('PORT', 5000))
     except NameError:
         pass
