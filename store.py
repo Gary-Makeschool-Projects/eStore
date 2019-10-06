@@ -144,9 +144,8 @@ try:
         if request.method == 'POST':
             # if we find a user in the database return that user exists and redirect the client to the register form with an error message
             if user.find_one({"email": request.form['email']}):
-                user_exists = True
-                flash('user already exists')
-                return redirect(url_for('register', user_exists=user_exists))
+                user_exists = Truez
+                return redirect(url_for('register'))
             else:
                # if the user doesnt exist add to the user collection and return the users dashboard
                 # create new user object with credetials
@@ -154,8 +153,8 @@ try:
                 new_user = User(
                     request.form['email'], request.form['password'])
                 # new_user.server_ip = request.environ['REMOTE_ADDR']
-                new_user.client_ip = request.environ.get(
-                    'HTTP_X_REAL_IP', request.remote_addr)
+                # new_user.client_ip = request.environ.get(
+                #     'HTTP_X_REAL_IP', request.remote_addr)
 
                 # insert new user collection to data base
                 user_id = user.insert_one(new_user.json()).inserted_id
@@ -174,7 +173,7 @@ try:
                 # create the session with session model
                 session['user'] = json.loads(json_util.dumps(data))
 
-                return render_template('user_index.html', session=session['user'])
+                return render_template('user_index.html', cart_ammount=session['user']['cart_amount'], username=session['user']['username'])
 
         # if GET method retrun register HTML
         return render_template('register.html')
