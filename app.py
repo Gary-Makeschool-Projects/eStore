@@ -51,6 +51,8 @@ os.environ['MONGO_URI'] = 'mongodb://localhost:27017/contractor'
 host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
 app.config['MONGO_URI'] = host
 app.config['secret_key'] = os.urandom(24)
+os.environ['secret_key'] = os.urandom(24)
+
 
 # os.environ['MONGODB_URI'] = 'mongodb://localhost/contractor'
 # host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
@@ -361,6 +363,6 @@ def email():
 
 
 if __name__ == "__main__":
-    app.secret_key = os.urandom(24)
+    app.secret_key = os.environ.get('secret_key')
     app.run(debug=True, host='0.0.0.0',
             port=os.environ.get('PORT', 5000))
