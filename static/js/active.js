@@ -100,11 +100,11 @@ $(document).ready(function() {
         req = $.ajax({
             url: '/add',
             type: 'POST',
-            data: { id: id, src: src, cost: cost, name: name }
+            data: { src: src, cost: cost, name: name }
         });
 
-        $('#modernchaircontainer')
-            .fadeOut(1000)
-            .remove();
+        req.done(function(data) {
+            $('#lilcart').text(data.cart_ammount);
+        });
     });
 });

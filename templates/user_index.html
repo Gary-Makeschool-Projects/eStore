@@ -17,7 +17,7 @@
 
 </head>
 <body>
-
+        <h1> Welcome {{username}}</h1>
 <div class="search-wrapper section-padding-100">
 <div class="search-close">
 <i class="fa fa-close" aria-hidden="true"></i>
@@ -41,9 +41,7 @@
 
 <div class="mobile-nav">
 
-<!--<div class="amado-navbar-brand">
-<a href="index-2.html"><img src="img/core-img/logo.png" alt=""></a>
-</div> -->
+
 
 <div class="amado-navbar-toggler">
 <span></span><span></span><span></span>
@@ -59,12 +57,12 @@
 
 <nav class="amado-nav">
 <ul>
-<li class="active"><a href="#">Home</a></li>
+<li class="active"><a href="/">Home</a></li>
 <!-- <li><a href="#">Shop</a></li> -->
 
 <li><a href="{{ url_for('logout') }}">Logout</a></li>
 
-<li><a class="lilcart" href="#">Cart <b>{{session['cart_ammount']}}</b></a></li>
+<li><a href="#">Cart <span id="lilcart">{{cart}}</span></a></li>
 <li><a href="#">Checkout</a></li>
 </ul>
 </nav>
@@ -96,7 +94,7 @@
 <div class="line"></div>
 <p>From $180</p>
 <h4>Modern Chair</h4>
-<button id="modernchair" user_id={{id}} class="btn">Add to cart</button>
+<button id="modernchair" class="btn">Add to cart</button>
 
 <!-- </form> -->
 </div>
