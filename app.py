@@ -52,13 +52,13 @@ host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
 app.config['MONGO_URI'] = host
 
 
-
 # os.environ['MONGODB_URI'] = 'mongodb://localhost/contractor'
 # host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
 # app.config['MONGODB_URI'] = host
 # Set the session cookie to be secure
 
-app.config['secret_key'] = os.urandom(24)
+app.config['SECRET_KEY'] = os.urandom(24)
+app.secret_key = os.environ.get('SECRET_KEY')
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
 GOOGLE_DISCOVERY_URL = (
