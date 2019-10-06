@@ -53,8 +53,8 @@ try:
 
     # portnum = 8080  # custom port number
     # set environment variable
-    os.environ['MONGODB_URI'] = 'mongodb://127.0.0.1/contractor'
-    host = os.environ.get('MONGODB_URI', 'mongodb://127.0.0.1:27017/')
+    os.environ['MONGODB_URI'] = 'mongodb://localhost/contractor'
+    host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
     app.config['MONGODB_URI'] = host
     # Set the session cookie to be secure
     app.config['SESSION_COOKIE_SECURE'] = True
@@ -171,9 +171,6 @@ try:
 
         # if GET method retrun register HTML
         return render_template('register.html')
-    # google verification route
-    # @app.route(/'google4c996636e0586db0.html')
-    #     return render_template('google4c996636e0586db0.html')
 
     @app.route('/logout', methods=['GET'])
     def logout():
