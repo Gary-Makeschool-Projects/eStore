@@ -71,12 +71,6 @@ try:
     # OAuth 2 client setup
     auth = WebApplicationClient(GOOGLE_CLIENT_ID)
 
-    # Flask-Login helper to retrieve a user from our db
-
-    @login_manager.user_loader
-    def load_user(user_id):
-        return User.get(user_id)
-
 
 except NameError:
     pass
@@ -114,11 +108,11 @@ try:
                 400:
                     description:
         """
-        userdata = session.get('user', None)
-        if userdata:
-            return render_template('user_index.html')
-        else:
-            return render_template('index.html')
+        # userdata = session.get('user', None)
+        # if userdata:
+        #     return render_template('user_index.html')
+        # else:
+        return render_template('index.html')
 
     @app.route('/register', methods=['GET', 'POST'])
     def register():
@@ -215,6 +209,10 @@ try:
 
     def get_google_provider_cfg():
         return requests.get(GOOGLE_DISCOVERY_URL).json()
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return User.get(user_id)
 
     @app.route("/google")
     def google():
