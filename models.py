@@ -1,6 +1,7 @@
 # from store import db
 from datetime import datetime
 from bcrypt import hashpw, gensalt
+from scrapy import Spider  # yah im porbably 80x lazier than you
 
 
 class User(object):
@@ -12,6 +13,7 @@ class User(object):
         self.cart = []  # empty list of items
         self.server_ip = None  # pull the ip address of the server
         self.client_ip = None  # pull the client ip address
+        self.is_active = False
 
     def get_email(self):
         return self.email
@@ -30,13 +32,37 @@ class User(object):
 
         }
 
-    def add_furniture(self, Furniture):
+    def add_to_cart(self, Furniture):
         self.cart.append(Furniture)
 
 
 class Furniture(object):
-    def __init__(self, src):
+    def __init__(self, name, src, cost):
         self.path = src
+        self.name = name
+        self.cost = cost
 
     def get_path(self):
         return self.path
+
+    def get_name(self):
+        return self.name
+
+    def get_cost(self):
+        return self.cost
+
+    def json(self):
+        return {
+            'src': self.path,
+            'name': self.name,
+            'cost': self.cost
+
+        }
+
+
+class localSpider(Spider):
+    name = "lazy"
+    allowed_domains = ["localhost"]
+    start_urls = [
+        "",
+    ]

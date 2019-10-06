@@ -14,6 +14,11 @@ pymongo = "*"
 flask-mongoengine = "*"
 bcrypt = "*"
 json = "*"
+scrapy = "*"
+oauthlib = "*"
+pyopenssl = "*"
+flask-login = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.7"

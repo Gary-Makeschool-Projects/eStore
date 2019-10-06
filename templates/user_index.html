@@ -62,10 +62,9 @@
 <li class="active"><a href="#">Home</a></li>
 <!-- <li><a href="#">Shop</a></li> -->
 
-<li><a href={{ url_for('logout') }}>Logout</a></li>
+<li><a href="{{ url_for('logout') }}">Logout</a></li>
 
-
-<li><a href="#">Cart</a></li>
+<li><a class="lilcart" href="#">Cart <b>{{session['cart_ammount']}}</b></a></li>
 <li><a href="#">Checkout</a></li>
 </ul>
 </nav>
@@ -87,16 +86,19 @@
 
 <div class="products-catagories-area clearfix">
 <div class="amado-pro-catagory clearfix">
-
-<div class="single-products-catagory clearfix">
-<a href="#">
+<!-- <form id="modernchair" method='POST'></form> -->
+<div id="modernchaircontainer" class="single-products-catagory clearfix">
+<a href="#"></a>
 <img src="static/img/bg-img/1.jpg" alt="">
 
 <div class="hover-content">
+
 <div class="line"></div>
 <p>From $180</p>
 <h4>Modern Chair</h4>
-<button class="btn">Add to cart</button>
+<button id="modernchair" user_id={{id}} class="btn">Add to cart</button>
+
+<!-- </form> -->
 </div>
 </a>
 </div>
@@ -116,7 +118,7 @@
 
 <div class="single-products-catagory clearfix">
 <a href="#">
-<img src="static/img/bg-img/3.jpg" alt="">
+<img id="" src="static/img/bg-img/3.jpg" alt="">
 
 <div class="hover-content">
 <div class="line"></div>
