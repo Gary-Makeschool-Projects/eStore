@@ -50,7 +50,7 @@ app = Flask(__name__)  # app name
 os.environ['MONGO_URI'] = 'mongodb://localhost:27017/contractor'
 host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
 app.config['MONGO_URI'] = host
-os.environ['secret_key'] = os.urandom(24)
+
 
 
 # os.environ['MONGODB_URI'] = 'mongodb://localhost/contractor'
@@ -58,7 +58,7 @@ os.environ['secret_key'] = os.urandom(24)
 # app.config['MONGODB_URI'] = host
 # Set the session cookie to be secure
 
-# app.config['secret_key'] = os.urandom(24)
+app.config['secret_key'] = os.urandom(24)
 GOOGLE_CLIENT_ID = os.environ.get("GOOGLE_CLIENT_ID", None)
 GOOGLE_CLIENT_SECRET = os.environ.get("GOOGLE_CLIENT_SECRET", None)
 GOOGLE_DISCOVERY_URL = (
@@ -362,6 +362,6 @@ def email():
 
 
 if __name__ == "__main__":
-    app.secret_key = os.environ.get('secret_key')
+    app.secret_key = os.urandom(24)
     app.run(debug=True, host='0.0.0.0',
             port=os.environ.get('PORT', 5000))
