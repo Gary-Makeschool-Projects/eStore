@@ -25,12 +25,13 @@ try:
     from models import User, Furniture
     from collections import defaultdict
 
-
+# handle an import error
 except ImportError as error:
     print(error, file=sys.stderr)
     print('\x1b[1;31m' + "run pipenv install 'moduleName' " + '\x1b[0m')
 
 try:
+    # check to see if the enviornment variable is set and catch the key error if not
     os.environ['FLASK_ENV']
 except KeyError as error:
     sys.stdout.write(
@@ -46,7 +47,8 @@ app = Flask(__name__)  # app name
 
 # portnum = 8080  # custom port number
 # set environment variable
-# app.config['SESSION_COOKIE_SECURE'] = True
+# app.config['SESSION_COOKIE_SECURE'] = True THIS FUCKED ME OVER
+# set default mongodb URI
 os.environ['MONGO_URI'] = 'mongodb://localhost:27017/contractor'
 host = os.environ.get('MONGODB_URI', 'mongodb://localhost:27017/')
 app.config['MONGO_URI'] = host
@@ -101,13 +103,20 @@ def index():
     """
 
     if 'user' in session:
-        # transfer the user session over to the home page
-        user = session['user']
-        cart = user['cart_ammount']
-        username = user['username']
-        print(user)
+        if 'ammount' in session:
+            # transfer the user session over to the home page
+            user = session['user']
+            cart = session['ammount']
+            username = user['username']
+            print(user)
+            return render_template('user_index.html', user=user, cart=cart, username=username)
+        else:
+            user = session['user']
+            cart = user['cart_ammount']
+            username = user['username']
+            print(user)
 
-        return render_template('user_index.html', user=user, cart=cart, username=username)
+            return render_template('user_index.html', user=user, cart=cart, username=username)
     elif 'google_auth' in session:
         google = session['google_auth']
         print(google)
@@ -221,8 +230,14 @@ def add():
         print(username)
         # find the user in the database
         current_user = user.find_one({'email': username})
+        # user cart info
         cart = current_user['cart']
-
+        # create furniture object and insert into database
+        furniture_id = {'furniture_list': furniture.insert_one(Furniture(
+            request.form["name"], request.form["src"], request.form["cost"]).json()).inserted_id}
+        # update users furniture list with furniture id
+        user.update_one(
+            {'email': username}, {'$push': furniture_id})
         # structure the json object and create furniture object
         updated_cart = {
             'cart': Furniture(request.form["name"], request.form["src"], request.form["cost"]).json()
@@ -233,10 +248,19 @@ def add():
 
         new_data = user.find_one({'email': username})
         ammount = len(new_data['cart'])
-
+        session['ammount'] = ammount
+        print(session['ammount'])
         return jsonify({'result': 'success', 'cart_ammount': ammount})
     else:
         return 'wtf you looking for'
+
+
+@app.route('/cart', methods=['GET'])
+def cart():
+    if 'user' in session:
+        return render_template('cart.html')
+    else:
+        return redirect(url_for('index'))
 
 
 def get_google_provider_cfg():
@@ -267,11 +291,10 @@ def google():
 def callback():
     # Get authorization code Google sent back
     code = request.args.get("code")
-    # Find out what URL to hit to get tokens that allow you to ask for
-    # things on behalf of a user
+    # Find out what URL to hit to get tokens that allow you to ask for things on behalf of a user
     google_provider_cfg = get_google_provider_cfg()
     token_endpoint = google_provider_cfg["token_endpoint"]
-    # Prepare and send a request to get tokens! Yay tokens!
+    # Prepare and send a request to get tokens
     token_url, headers, body = auth.prepare_token_request(
         token_endpoint,
         authorization_response=request.url,
@@ -285,12 +308,14 @@ def callback():
         auth=(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET),
     )
 
-    # Parse the tokens!
+    # Parse the fucking tokens!
     auth.parse_request_body_response(json.dumps(token_response.json()))
     # user's profile information, including their Google profile image and email
     userinfo_endpoint = google_provider_cfg["userinfo_endpoint"]
     uri, headers, body = auth.add_token(userinfo_endpoint)
+    # lets grab that user infos
     userinfo_response = requests.get(uri, headers=headers, data=body)
+    # quick sanity check before accessing data
     if userinfo_response.json().get("email_verified"):
         unique_id = userinfo_response.json()["sub"]
         users_email = userinfo_response.json()["email"]
@@ -327,7 +352,9 @@ def email():
     }
     # SSL connection port numbers
     SSL_ports = {"lower_port": 465, "high_port": 25025}
+    # log debug level
     debug_level = 3
+    # generic email string
     mail_content = """Thank you for subscribing to our newsletter :) """
 
     try:

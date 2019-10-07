@@ -14,6 +14,7 @@ class User(object):
         self.server_ip = None  # pull the ip address of the server
         self.client_ip = None  # pull the client ip address
         self.is_active = False
+        self.furniture_list = []
 
     def get_email(self):
         return self.email

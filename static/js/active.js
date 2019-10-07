@@ -93,7 +93,6 @@
 
 $(document).ready(function() {
     $('#modernchair').on('click', function() {
-        var id = $(this).attr('user_id');
         var src = 'static/img/bg-img/1.jpg';
         var cost = '$180';
         var name = 'Modern Chair';
@@ -102,7 +101,134 @@ $(document).ready(function() {
             type: 'POST',
             data: { src: src, cost: cost, name: name }
         });
+        req.done(function(data) {
+            $('#lilcart').text(data.cart_ammount);
+        });
+    });
+});
 
+$(document).ready(function() {
+    $('#plantpot').on('click', function() {
+        var src = 'static/img/bg-img/2.jpg';
+        var cost = '$180';
+        var name = 'Minimalistic Plant Pot';
+        req = $.ajax({
+            url: '/add',
+            type: 'POST',
+            data: { src: src, cost: cost, name: name }
+        });
+        req.done(function(data) {
+            $('#lilcart').text(data.cart_ammount);
+        });
+    });
+});
+
+$(document).ready(function() {
+    $('#modernchair2').on('click', function() {
+        var src = 'static/img/bg-img/3.jpg';
+        var cost = '$180';
+        var name = 'Modern Chair';
+        req = $.ajax({
+            url: '/add',
+            type: 'POST',
+            data: { src: src, cost: cost, name: name }
+        });
+        req.done(function(data) {
+            $('#lilcart').text(data.cart_ammount);
+        });
+    });
+});
+
+$(document).ready(function() {
+    $('#nightstand').on('click', function() {
+        var src = 'static/img/bg-img/4.jpg';
+        var cost = '$180';
+        var name = 'Night Stand';
+        req = $.ajax({
+            url: '/add',
+            type: 'POST',
+            data: { src: src, cost: cost, name: name }
+        });
+        req.done(function(data) {
+            $('#lilcart').text(data.cart_ammount);
+        });
+    });
+});
+
+$(document).ready(function() {
+    $('#basicpot').on('click', function() {
+        var src = 'static/img/bg-img/5.jpg';
+        var cost = '$18';
+        var name = 'Plant Pot';
+        req = $.ajax({
+            url: '/add',
+            type: 'POST',
+            data: { src: src, cost: cost, name: name }
+        });
+        req.done(function(data) {
+            $('#lilcart').text(data.cart_ammount);
+        });
+    });
+});
+
+$(document).ready(function() {
+    $('#smalltable').on('click', function() {
+        var src = 'static/img/bg-img/6.jpg';
+        var cost = '$320';
+        var name = 'Minimalistic Table';
+        req = $.ajax({
+            url: '/add',
+            type: 'POST',
+            data: { src: src, cost: cost, name: name }
+        });
+        req.done(function(data) {
+            $('#lilcart').text(data.cart_ammount);
+        });
+    });
+});
+
+$(document).ready(function() {
+    $('#metallic').on('click', function() {
+        var src = 'static/img/bg-img/7.jpg';
+        var cost = '$318';
+        var name = 'Metallic Chair';
+        req = $.ajax({
+            url: '/add',
+            type: 'POST',
+            data: { src: src, cost: cost, name: name }
+        });
+        req.done(function(data) {
+            $('#lilcart').text(data.cart_ammount);
+        });
+    });
+});
+
+$(document).ready(function() {
+    $('#rocking').on('click', function() {
+        var src = 'static/img/bg-img/8.jpg';
+        var cost = '$318';
+        var name = 'Modern Rocking Chair';
+        req = $.ajax({
+            url: '/add',
+            type: 'POST',
+            data: { src: src, cost: cost, name: name }
+        });
+        req.done(function(data) {
+            $('#lilcart').text(data.cart_ammount);
+        });
+    });
+});
+
+$(document).ready(function() {
+    $('#deco').on('click', function() {
+        var src = 'static/img/bg-img/9.jpg';
+        var cost = '$318';
+        var name = 'Home Deco';
+        req = $.ajax({
+            url: '/add',
+            type: 'POST',
+            data: { src: src, cost: cost, name: name }
+        });
         req.done(function(data) {
             $('#lilcart').text(data.cart_ammount);
         });

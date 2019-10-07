@@ -62,7 +62,7 @@
 
 <li><a href="{{ url_for('logout') }}">Logout</a></li>
 
-<li><a href="#">Cart <span id="lilcart">{{cart}}</span></a></li>
+<li><a href="{{url_for('cart')}}">Cart <span id="lilcart">{{cart}}</span></a></li>
 <!-- <li><a href="#">Checkout</a></li> -->
 </ul>
 </nav>
@@ -86,7 +86,7 @@
 <div class="amado-pro-catagory clearfix">
 <div class="single-products-catagory clearfix">
 <a href="#">
-<img src="static/img/bg-img/1.jpg" alt="">
+<img class = "modernchair" src="static/img/bg-img/1.jpg" alt="">
 
 <div class="hover-content">
 
@@ -106,7 +106,7 @@
 <div class="line"></div>
 <p>From $180</p>
 <h4>Minimalistic Plant Pot</h4>
-<button class="btn">Add to cart</button>
+<button id="plantpot" class="btn">Add to cart</button>
 </div>
 </a>
 </div>
@@ -119,7 +119,7 @@
 <div class="line"></div>
 <p>From $180</p>
 <h4>Modern Chair</h4>
-<button class="btn">Add to cart</button>
+<button id='modernchair2'class="btn">Add to cart</button>
 </div>
 </a>
 </div>
@@ -132,7 +132,7 @@
 <div class="line"></div>
 <p>From $180</p>
 <h4>Night Stand</h4>
-<button class="btn">Add to cart</button>
+<button id='nightstand' class="btn">Add to cart</button>
 </div>
 </a>
 </div>
@@ -145,7 +145,7 @@
 <div class="line"></div>
 <p>From $18</p>
 <h4>Plant Pot</h4>
-<button class="btn">Add to cart</button>
+<button id='basicpot' class="btn">Add to cart</button>
 </div>
 </a>
 </div>
@@ -158,7 +158,7 @@
 <div class="line"></div>
 <p>From $320</p>
 <h4>Small Table</h4>
-<button class="btn">Add to cart</button>
+<button id='smalltable' class="btn">Add to cart</button>
 </div>
 </a>
 </div>
@@ -171,7 +171,7 @@
 <div class="line"></div>
 <p>From $318</p>
 <h4>Metallic Chair</h4>
-<button class="btn">Add to cart</button>
+<button id='metallic' class="btn">Add to cart</button>
 </div>
 </a>
 </div>
@@ -184,7 +184,7 @@
 <div class="line"></div>
 <p>From $318</p>
 <h4>Modern Rocking Chair</h4>
-<button class="btn">Add to cart</button>
+<button id='rocking' class="btn">Add to cart</button>
 </div>
 </a>
 </div>
@@ -197,7 +197,7 @@
 <div class="line"></div>
 <p>From $318</p>
 <h4>Home Deco</h4>
-<button class="btn">Add to cart</button>
+<button id='deco' class="btn">Add to cart</button>
 </div>
 </a>
 </div>
