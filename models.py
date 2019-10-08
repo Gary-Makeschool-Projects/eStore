@@ -27,7 +27,7 @@ class User(object):
             'email': self.email,
             'password': self.password,
             'created_at': self.timestamp,
-            'remote_ip': self.remote_ip
+            'remote_ip': self.remote_ip,
             'server_ip': self.server_ip,
             'client_ip': self.client_ip,
             'cart': self.cart
