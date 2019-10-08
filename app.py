@@ -193,12 +193,11 @@ def register():
                 # create new user object with credetials
                 new_user = User(
                     request.form['email'], request.form['password'])
-                # 'remote_addr1': request.remote_addr,
-                # 'remote_addr2': request.environ.get('REMOTE_ADDR'),
-                # 'HTTP_X_FORWARDED_FOR': request.environ.get('HTTP_X_FORWARDED_FOR'),
-                # 'X-Forwarded-For': request.environ.get('X-Forwarded-For'),
-                # 'X-Client-IP': request.environ.get('X-Client-IP')
-                new_user.server_ip = request.environ['REMOTE_ADDR']
+
+                print(request.remote_addr)
+                print(request.environ.get('HTTP_X_FORWARDED_FOR'))
+                print(request.environ.get('X-Forwarded-For'))
+                new_user.server_ip = request.environ.get('X-Client-IP')
                 new_user.client_ip = request.environ.get(
                     'HTTP_X_REAL_IP', request.remote_addr)
                 # insert new user collection to data base
