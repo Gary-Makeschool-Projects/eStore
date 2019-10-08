@@ -166,29 +166,29 @@ def register():
                 return redirect(url_for('register'))
 
             else:
-                
-                html = urlopen(https://minimalstore.herokuapp.com/)
-                bs = BeautifulSoup(html, 'html.parser')
-                src = []
-                price = []
-                title = []
-                images = bs.find_all('img', {'src': re.compile('.jpg')})
-                for image in images:
-                    price.append(image.get('alt'))
-                    src.append(image['src'])
-                names = bs.find_all('h4')
-                for x in names:
-                    title.append(x.string)
-
-                def add(name, price, src):
-                    for x in range(len(name)):
-                        furniture.insert_one(
-                            Furniture(name[x], src[x], price[x]).json())
-
                 if furniture.find_one({'src': 'static/img/bg-img/4.jpg'}):
                     print('not gonna be added')
                 else:
+
+                    html = urlopen(https: // minimalstore.herokuapp.com/)
+                    bs = BeautifulSoup(html, 'html.parser')
+                    src = []
+                    price = []
+                    title = []
+                    images = bs.find_all('img', {'src': re.compile('.jpg')})
+                    for image in images:
+                        price.append(image.get('alt'))
+                        src.append(image['src'])
+                    names = bs.find_all('h4')
+                    for x in names:
+                        title.append(x.string)
+
+                    def add(name, price, src):
+                        for x in range(len(name)):
+                            furniture.insert_one(
+                                Furniture(name[x], src[x], price[x]).json())
                     add(title, price, src)
+
                 # if the user doesnt exist add to the user collection and return the users dashboard
                 # create new user object with credetials
                 new_user = User(
