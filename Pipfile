@@ -11,11 +11,11 @@ requests = "*"
 flask = "*"
 pymongo = "*"
 bcrypt = "*"
-scrapy = "*"
 oauthlib = "*"
 pyopenssl = "*"
 flask-login = "*"
 gunicorn = "*"
+beautifulsoup4 = "*"
 
 [requires]
 python_version = "3.7"
