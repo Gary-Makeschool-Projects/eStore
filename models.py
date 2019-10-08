@@ -1,7 +1,6 @@
 # from store import db
 from datetime import datetime
 from bcrypt import hashpw, gensalt
-from scrapy import Spider  # yah im porbably 80x lazier than you
 
 
 class User(object):
@@ -59,11 +58,3 @@ class Furniture(object):
             'cost': self.cost
 
         }
-
-
-class localSpider(Spider):
-    name = "lazy"
-    allowed_domains = ["localhost"]
-    start_urls = [
-        "",
-    ]
