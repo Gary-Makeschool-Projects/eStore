@@ -221,6 +221,9 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    if 'user' in session:
+        return redirect(url_for('index'))
+
     if request.method == 'POST':
         login_user = user.find_one({'email': request.form['email']})
         if login_user:
@@ -239,13 +242,13 @@ def login():
 
                 return redirect(url_for('index'))
             else:
-                return render_template('login.html', fail='incorrect credentials')
+                return render_template('login2.html', fail='incorrect credentials')
 
         else:
-            return render_template('login.html', fail='incorrect credentials')
+            return render_template('login2.html', fail='incorrect credentials')
     if request.method == 'GET':
-        return render_template('login.html')
-    return render_template('login.html')
+        return render_template('login2.html')
+    # return render_template('login2.html')
 
 
 @app.route('/logout', methods=['GET'])
@@ -384,29 +387,44 @@ def callback():
     else:
         return "User email not available or not verified by Google.", 400
 
-    # Doesn't exist? Add it to the database.
-    new_user = User(users_email, unique_id)
-    new_user.server_ip = request.remote_addr
-    new_user.client_ip = request.environ.get(
-        'HTTP_X_FORWARDED_FOR')
-    # insert new user collection to data base
-    user_id = user.insert_one(new_user.json()).inserted_id
-    # define current user as the new collection
-    current_user = user.find_one({"email": users_email})
-    # model for persistent data
-    data = {
-        'username': current_user['email'],
-        'id': current_user['_id'],
-        'items': current_user['cart'],
-        'created': current_user['created_at'],
-        'ip': current_user['client_ip'],
-        'cart_ammount': len(current_user['cart'])
-    }
-    # Begin user session by logging the user in
+    if user.find_one({'email': users_email}):
+        current_user = user.find_one({'email': users_email})
+        data = {
+            'username': current_user['email'],
+            'id': current_user['_id'],
+            'items': current_user['cart'],
+            'created': current_user['created_at'],
+            'ip': current_user['client_ip'],
+            'cart_ammount': len(current_user['cart'])
+        }
+        # Begin user session by logging the user in
 
-    session['user'] = json.loads(json_util.dumps(data))
-    # Send user back to homepage
-    return redirect(url_for('index'))
+        session['user'] = json.loads(json_util.dumps(data))
+        # Send user back to homepage
+        return redirect(url_for('index'))
+    else:
+        new_user = User(users_email, unique_id)
+        new_user.server_ip = request.remote_addr
+        new_user.client_ip = request.environ.get(
+            'HTTP_X_FORWARDED_FOR')
+        # insert new user collection to data base
+        user_id = user.insert_one(new_user.json()).inserted_id
+        # define current user as the new collection
+        current_user = user.find_one({"email": users_email})
+        # model for persistent data
+        data = {
+            'username': current_user['email'],
+            'id': current_user['_id'],
+            'items': current_user['cart'],
+            'created': current_user['created_at'],
+            'ip': current_user['client_ip'],
+            'cart_ammount': len(current_user['cart'])
+        }
+        # Begin user session by logging the user in
+
+        session['user'] = json.loads(json_util.dumps(data))
+        # Send user back to homepage
+        return redirect(url_for('index'))
 
 
 @app.route('/email', methods=['POST'])
