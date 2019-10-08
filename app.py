@@ -24,6 +24,9 @@ try:
     from datetime import datetime
     from models import User, Furniture
     from collections import defaultdict
+    from urllib.request import urlopen
+    from bs4 import BeautifulSoup
+    import re
 
 # handle an import error
 except ImportError as error:
@@ -77,6 +80,9 @@ client = MongoClient(host=f'{host}?retryWrites=false')
 db = client.get_default_database('test')    # get default database name
 user = db.user  # user collection
 furniture = db.furniture  # furniture collection
+base = ''
+# hard code the furniture collection into the database
+print(base)
 
 
 @app.route('/', methods=['GET'])
@@ -101,6 +107,8 @@ def index():
             400:
                 description:
     """
+    global base
+    base = request.base_url
 
     if 'user' in session:
         if 'ammount' in session:
@@ -109,6 +117,7 @@ def index():
             cart = session['ammount']
             username = user['username']
             print(user)
+            print(cart)
             return render_template('user_index.html', user=user, cart=cart, username=username)
         else:
             user = session['user']
@@ -157,10 +166,38 @@ def register():
                 return redirect(url_for('register'))
 
             else:
+                global base
+                html = urlopen(base)
+                bs = BeautifulSoup(html, 'html.parser')
+                src = []
+                price = []
+                title = []
+                images = bs.find_all('img', {'src': re.compile('.jpg')})
+                for image in images:
+                    price.append(image.get('alt'))
+                    src.append(image['src'])
+                names = bs.find_all('h4')
+                for x in names:
+                    title.append(x.string)
+
+                def add(name, price, src):
+                    for x in range(len(name)):
+                        furniture.insert_one(
+                            Furniture(name[x], src[x], price[x]).json())
+
+                if furniture.find_one({'src': 'static/img/bg-img/4.jpg'}):
+                    print('not gonna be added')
+                else:
+                    add(title, price, src)
                 # if the user doesnt exist add to the user collection and return the users dashboard
                 # create new user object with credetials
                 new_user = User(
                     request.form['email'], request.form['password'])
+                # 'remote_addr1': request.remote_addr,
+                # 'remote_addr2': request.environ.get('REMOTE_ADDR'),
+                # 'HTTP_X_FORWARDED_FOR': request.environ.get('HTTP_X_FORWARDED_FOR'),
+                # 'X-Forwarded-For': request.environ.get('X-Forwarded-For'),
+                # 'X-Client-IP': request.environ.get('X-Client-IP')
                 new_user.server_ip = request.environ['REMOTE_ADDR']
                 new_user.client_ip = request.environ.get(
                     'HTTP_X_REAL_IP', request.remote_addr)
@@ -193,6 +230,7 @@ def login():
         login_user = user.find_one({'email': request.form['email']})
         if login_user:
             if bcrypt.hashpw(request.form['password'].encode('utf-8'), login_user['password']) == login_user['password']:
+
                 data = {
                     'username': login_user['email'],
                     'id': login_user['_id'],
@@ -232,15 +270,20 @@ def add():
         current_user = user.find_one({'email': username})
         # user cart info
         cart = current_user['cart']
-        # create furniture object and insert into database
-        furniture_id = {'furniture_list': furniture.insert_one(Furniture(
-            request.form["name"], request.form["src"], request.form["cost"]).json()).inserted_id}
+        # find the furniture object the user has clicked on
+        current_furniture = furniture.find_one({'src': request.form['src']})
+
+        furniture_id = {'cart': current_furniture['_id']}
+        # search the db for the items src and add the id to the furniture_list
+
+        # once the object is found insert this furnitures id into the database
+
         # update users furniture list with furniture id
         user.update_one(
             {'email': username}, {'$push': furniture_id})
         # structure the json object and create furniture object
         updated_cart = {
-            'cart': Furniture(request.form["name"], request.form["src"], request.form["cost"]).json()
+            'furniture_list': current_furniture['src']
         }
 
         updated_user = user.update_one(
@@ -253,6 +296,19 @@ def add():
         return jsonify({'result': 'success', 'cart_ammount': ammount})
     else:
         return 'wtf you looking for'
+
+
+@app.route('/delete', methods=['POST'])
+def delete():
+    if 'user' in session:
+        # set the current user to the open session
+        current_sesh = session['user']
+        # find the current user from the session data
+        username = current_seh['username']
+        # find the user in the data base
+        current_user = user.find_one({'email': username})
+    else:
+        return 'what are you looking for'
 
 
 @app.route('/cart', methods=['GET'])
@@ -390,5 +446,5 @@ def email():
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(24)
-    app.run(debug=True, host='0.0.0.0',
+    app.run(debug=True, host='127.0.0.1',
             port=os.environ.get('PORT', 5000))

@@ -90,7 +90,6 @@
         });
     });
 })(jQuery);
-
 $(document).ready(function() {
     $('#modernchair').on('click', function() {
         var src = 'static/img/bg-img/1.jpg';
