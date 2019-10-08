@@ -1,4 +1,5 @@
 import sys
+import os
 
 
 class version_error(Exception):
