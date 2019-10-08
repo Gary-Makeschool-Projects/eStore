@@ -4,7 +4,7 @@ from bcrypt import hashpw, gensalt
 
 
 class User(object):
-    def __init__(self, email, password):
+    def __init__(self, email, password=0):
         self.email = email  # email will be the username
         self.password = hashpw(password.encode(
             'utf-8'), gensalt())  # encrypt password

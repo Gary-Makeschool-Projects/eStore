@@ -309,7 +309,15 @@ def delete():
 @app.route('/cart', methods=['GET'])
 def cart():
     if 'user' in session:
-        return render_template('cart.html')
+        if 'ammount' in session:
+            current_user = session['user']
+            cart_ammount = session['ammount']
+
+            return render_template('cart.html', cart=cart_ammount)
+        else:
+            current_user = session['user']
+            cart_ammount = current_user['cart_ammount']
+            return render_template('cart.html', cart=cart_ammount)
     else:
         return redirect(url_for('index'))
 
@@ -376,11 +384,18 @@ def callback():
         return "User email not available or not verified by Google.", 400
 
     # Doesn't exist? Add it to the database.
-    new_user = User(email=users_email, password='test')
-
+    new_user = User(users_email)
+    data = {
+            'username': new_user['email'],
+            'id': new_user['_id'],
+            'created': new_user['created_at'],
+            'items': new_user['cart'],
+            'ip': new_user['client_ip'],
+            'cart_ammount': len(new_user['cart'])
+            }
     # Begin user session by logging the user in
 
-    session['google_auth'] = json.loads(json_util.dumps(new_user))
+    session['google_auth'] = json.loads(json_util.dumps(data))
     # Send user back to homepage
     return redirect(url_for('index'))
 
@@ -441,5 +456,5 @@ def email():
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(24)
-    app.run(debug=True, host='0.0.0.0',
+    app.run(debug=True, host='127.0.0.1',
             port=os.environ.get('PORT', 5000))
