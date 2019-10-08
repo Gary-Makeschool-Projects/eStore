@@ -378,6 +378,7 @@ def callback():
     if userinfo_response.json().get("email_verified"):
         unique_id = userinfo_response.json()["sub"]
         users_email = userinfo_response.json()["email"]
+        print(users_email)
         picture = userinfo_response.json()["picture"]
         users_name = userinfo_response.json()["given_name"]
     else:
@@ -386,7 +387,7 @@ def callback():
     # Doesn't exist? Add it to the database.
     new_user = User(users_email)
     data = {
-            'username': new_user['email'],
+            'username': str(new_user['email']),
             'id': new_user['_id'],
             'created': new_user['created_at'],
             'items': new_user['cart'],
