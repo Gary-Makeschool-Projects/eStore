@@ -377,8 +377,8 @@ def callback():
     # quick sanity check before accessing data
     if userinfo_response.json().get("email_verified"):
         unique_id = userinfo_response.json()["sub"]
+        print(unique_id)
         users_email = userinfo_response.json()["email"]
-        print(users_email)
         picture = userinfo_response.json()["picture"]
         users_name = userinfo_response.json()["given_name"]
     else:
@@ -386,14 +386,22 @@ def callback():
 
     # Doesn't exist? Add it to the database.
     new_user = User(users_email)
+    new_user.server_ip = request.remote_addr
+    new_user.client_ip = request.environ.get(
+        'HTTP_X_FORWARDED_FOR')
+    # insert new user collection to data base
+    user_id = user.insert_one(new_user.json()).inserted_id
+    # define current user as the new collection
+    current_user = user.find_one({"email": users_email})
+    # model for persistent data
     data = {
-            'username': str(new_user['email']),
-            'id': new_user['_id'],
-            'created': new_user['created_at'],
-            'items': new_user['cart'],
-            'ip': new_user['client_ip'],
-            'cart_ammount': len(new_user['cart'])
-            }
+        'username': current_user['email'],
+        'id': current_user['_id'],
+        'items': current_user['cart'],
+        'created': current_user['created_at'],
+        'ip': current_user['client_ip'],
+        'cart_ammount': len(current_user['cart'])
+    }
     # Begin user session by logging the user in
 
     session['google_auth'] = json.loads(json_util.dumps(data))
