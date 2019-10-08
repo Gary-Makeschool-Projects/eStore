@@ -385,7 +385,7 @@ def callback():
         return "User email not available or not verified by Google.", 400
 
     # Doesn't exist? Add it to the database.
-    new_user = User(users_email)
+    new_user = User(users_email, unique_id)
     new_user.server_ip = request.remote_addr
     new_user.client_ip = request.environ.get(
         'HTTP_X_FORWARDED_FOR')
@@ -404,7 +404,7 @@ def callback():
     }
     # Begin user session by logging the user in
 
-    session['google_auth'] = json.loads(json_util.dumps(data))
+    session['user'] = json.loads(json_util.dumps(data))
     # Send user back to homepage
     return redirect(url_for('index'))
 
