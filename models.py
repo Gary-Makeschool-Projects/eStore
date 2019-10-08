@@ -12,6 +12,7 @@ class User(object):
         self.cart = []  # empty list of items
         self.server_ip = None  # pull the ip address of the server
         self.client_ip = None  # pull the client ip address
+        self.remote_ip = None
         self.is_active = False
         self.furniture_list = []
 
@@ -26,6 +27,7 @@ class User(object):
             'email': self.email,
             'password': self.password,
             'created_at': self.timestamp,
+            'remote_ip': self.remote_ip
             'server_ip': self.server_ip,
             'client_ip': self.client_ip,
             'cart': self.cart
