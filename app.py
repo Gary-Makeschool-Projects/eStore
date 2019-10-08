@@ -170,7 +170,7 @@ def register():
                     print('not gonna be added')
                 else:
 
-                    html = urlopen(https: // minimalstore.herokuapp.com/)
+                    html = urlopen('https://minimalstore.herokuapp.com/')
                     bs = BeautifulSoup(html, 'html.parser')
                     src = []
                     price = []
