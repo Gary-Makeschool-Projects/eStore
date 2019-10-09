@@ -30,7 +30,7 @@ class User(object):
             'remote_ip': self.remote_ip,
             'server_ip': self.server_ip,
             'client_ip': self.client_ip,
-            'cart': self.cart
+            'cart': self.cart,
             'furniture_list': self.furniture_list
 
         }
