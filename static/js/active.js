@@ -233,3 +233,20 @@ $(document).ready(function() {
         });
     });
 });
+
+function del() {
+    $(document).ready(function() {
+        val = $(this).attr('id');
+        console.log(val);
+        req = $.ajax({
+            url: '/delete',
+            type: 'POST',
+            data: { val: val }
+        });
+        req.done(function(data) {
+            $(val)
+                .fadeOut(1000)
+                .remove();
+        });
+    });
+}

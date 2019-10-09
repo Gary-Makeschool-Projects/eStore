@@ -107,8 +107,6 @@ def index():
             400:
                 description:
     """
-    global base
-    base = request.base_url
 
     if 'user' in session:
         if 'ammount' in session:
@@ -207,6 +205,7 @@ def register():
                     'items': current_user['cart'],
                     'created': current_user['created_at'],
                     'ip': current_user['client_ip'],
+                    'images': current_user['furniture_list'],
                     'cart_ammount': len(current_user['cart'])
                 }
                 # serialize and create the session with session model
@@ -235,7 +234,8 @@ def login():
                     'created': login_user['created_at'],
                     'items': login_user['cart'],
                     'ip': login_user['client_ip'],
-                    'cart_ammount': len(login_user['cart'])
+                    'cart_ammount': len(login_user['cart']),
+                    'images': login_user['furniture_list']
                 }
 
                 session['user'] = json.loads(json_util.dumps(data))
@@ -288,8 +288,18 @@ def add():
             {'email': username}, {'$push': updated_cart})
 
         new_data = user.find_one({'email': username})
+        data = {
+                    'username': new_data['email'],
+                    'id': new_data['_id'],
+                    'created': new_data['created_at'],
+                    'items': new_data['cart'],
+                    'ip': new_data['client_ip'],
+                    'cart_ammount': len(new_data['cart']),
+                    'images': new_data['furniture_list']
+                }
         ammount = len(new_data['cart'])
         session['ammount'] = ammount
+        session['update'] = json.loads(json_util.dumps(data))
         print(session['ammount'])
         return jsonify({'result': 'success', 'cart_ammount': ammount})
     else:
@@ -299,12 +309,15 @@ def add():
 @app.route('/delete', methods=['POST'])
 def delete():
     if 'user' in session:
-        # set the current user to the open session
-        current_sesh = session['user']
-        # find the current user from the session data
-        username = current_seh['username']
-        # find the user in the data base
+        username = session['user']['username']
+        # find the user in the database
         current_user = user.find_one({'email': username})
+        # user cart info
+        cart = current_user['cart']
+        # find the furniture object the user has clicked on
+        current_furniture = furniture.find_one({'src': request.form['val']})
+        print(current_furniture)
+
     else:
         return 'what are you looking for'
 
@@ -313,14 +326,46 @@ def delete():
 def cart():
     if 'user' in session:
         if 'ammount' in session:
-            current_user = session['user']
-            cart_ammount = session['ammount']
+            if 'update' in session:
+                cart_ammount = session['ammount']
+                updated_user = session['update']
+                images = updated_user['images']
+                items = []
+                ids = []
+                for x in images:
+                    items.append(furniture.find_one({'src': x}))
+                for x in range(len(items)):
+                    ids.append(x)
+                price = 0
+                for x in items:
+                    price += float(x['cost'])
+                return render_template('cart.html', cart=cart_ammount,items=items, total=price, ids=ids)
+            else:
+                current_user = session['user']
+                cart_ammount = session['ammount']
+                images = current_user['images']
+                items = []
+                for x in images:
+                    items.append(furniture.find_one({'src': x}))
+                price = 0
+                for x in items:
+                    price += float(x['cost'])
 
-            return render_template('cart.html', cart=cart_ammount)
+                
+
+            return render_template('cart.html', cart=cart_ammount, items=items, total=price)
         else:
             current_user = session['user']
             cart_ammount = current_user['cart_ammount']
-            return render_template('cart.html', cart=cart_ammount)
+
+            images = current_user['images']
+            items = []
+            for x in images:
+                items.append(furniture.find_one({'src': x}))
+            price = 0
+            for x in items:
+                price += float(x['cost'])
+            return render_template('cart.html', cart=cart_ammount, items=items, total=price)
     else:
         return redirect(url_for('index'))
 
@@ -483,5 +528,5 @@ def email():
 
 if __name__ == "__main__":
     app.secret_key = os.urandom(24)
-    app.run(debug=True, host='127.0.0.1',
+    app.run(debug=True, host='0.0.0.0',
             port=os.environ.get('PORT', 5000))
