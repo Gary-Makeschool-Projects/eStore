@@ -440,6 +440,7 @@ def callback():
             'items': current_user['cart'],
             'created': current_user['created_at'],
             'ip': current_user['client_ip'],
+            'images': current_user['furniture_list'],
             'cart_ammount': len(current_user['cart'])
         }
         # Begin user session by logging the user in
