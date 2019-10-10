@@ -16,6 +16,7 @@ pyopenssl = "*"
 flask-login = "*"
 gunicorn = "*"
 beautifulsoup4 = "*"
+selenium = "*"
 
 [requires]
 python_version = "3.7"

@@ -234,19 +234,20 @@ $(document).ready(function() {
     });
 });
 
-function del() {
+function del(someval) {
     $(document).ready(function() {
-        val = $(this).attr('id');
-        console.log(val);
+        let id = someval;
+        console.log(id);
         req = $.ajax({
             url: '/delete',
             type: 'POST',
-            data: { val: val }
+            data: { id: id }
         });
+
         req.done(function(data) {
-            $(val)
-                .fadeOut(1000)
-                .remove();
+            console.log(data.id);
+            $(`#${data.id}`).remove();
+            $('#lilcart').text(data.cart_ammount);
         });
     });
 }

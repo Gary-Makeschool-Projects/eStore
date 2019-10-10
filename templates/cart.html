@@ -75,7 +75,7 @@
 </div> -->
 
 <div class="cart-fav-search mb-100">
-<a href="cart.html" class="cart-nav"><img src="static/img/core-img/cart.png" alt=""> Cart <span>({{cart}})</span></a>
+<a href="cart.html"  class="cart-nav"><img src="static/img/core-img/cart.png" alt=""> Cart <span id="lilcart">({{cart}})</span></a>
 </div>
 
 </header>
@@ -98,15 +98,13 @@
 </tr>
 </thead>
 <tbody>
-{%for y in ids%}
-<div id={{y}}>
-{% endfor %}
+
 {% for x in items%}
-<tr id="{{y}}">
+<tr>
 <td class="cart_product_img">
 <a href="#"><img src="{{x['src']}}"" alt="Product"></a>
 </td>
-<td id=class="cart_product_desc">
+<td class="cart_product_desc">
 <h5>{{x['name']}}</h5>
 </td>
 <td class="price">
@@ -115,16 +113,13 @@
 <td class="qty">
 
 <div class="quantity">
-        <button id=""  class="btn" onClick="del()">Delete</button>
+        <button  id="{{loop.index}}" class="btn" onClick="del(this.id)">Delete</button>
 </div>
 </div>
 </td>
 </tr>
+{% endfor %}
 
-{% endfor %}
-{% for z in ids%}
-</div>
-{% endfor %}
 </tbody>
 </table>
 </div>
@@ -133,7 +128,7 @@
 <div class="cart-summary">
 <h5>Cart Total</h5>
 <ul class="summary-table">
-<li><span>subtotal:</span> <span>${{total}}</span></li>
+<li><span>subtotal:</span> <span id="liltotal">${{total}}</span></li>
 <li><span>delivery:</span> <span>Free</span></li>
 <li><span>total:</span> <span>${{total}}</span></li>
 </ul>
