@@ -298,6 +298,7 @@ def add():
         ammount = len(new_data['cart'])
         session['ammount'] = ammount
         session['update'] = json.loads(json_util.dumps(data))
+        session['user'] = json.loads(json_util.dumps(data))
         return jsonify({'result': 'success', 'cart_ammount': ammount})
     else:
         return 'wtf you looking for'
@@ -348,6 +349,7 @@ def delete():
             
             session['ammount'] = ammount
             session['update'] = json.loads(json_util.dumps(data))
+            session['user'] = json.loads(json_util.dumps(data))
             return jsonify({'result': 'success', 'id':index, 'cart_ammount': ammount})
 
     else:
