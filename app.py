@@ -80,9 +80,9 @@ client = MongoClient(host=f'{host}?retryWrites=false')
 db = client.get_default_database('test')    # get default database name
 user = db.user  # user collection
 furniture = db.furniture  # furniture collection
-base = ''
-# hard code the furniture collection into the database
-print(base)
+visitor = db.visitor
+
+
 
 
 @app.route('/', methods=['GET'])
@@ -127,6 +127,12 @@ def index():
         google = session['google_auth']
         return "logged in using google"
     else:
+        data = {
+            'server_ip':  request.remote_addr,
+            'client_ip': request.environ.get('HTTP_X_FORWARDED_FOR')
+        }
+        # log visitors ip address
+        visitor.insert_one(data)
         # if there isnt a session return index
         return render_template('index.html')
 
