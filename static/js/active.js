@@ -248,7 +248,6 @@ function del(someval) {
             console.log(data.id);
             $(`#${data.id}`).remove();
             $('#lilcart').text(data.cart_ammount);
-            $('#liltotal').text(data.);
         });
     });
 }
