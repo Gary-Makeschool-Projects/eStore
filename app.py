@@ -306,53 +306,6 @@ def add():
 @app.route('/delete', methods=['POST'])
 def delete():
     if 'user' in session:
-        if 'update' in session:
-             # inside session user
-            print("user session")
-            # get the username
-            username = session['update']['username']
-            # find the user in the database
-            current_user = user.find_one({'email': username})
-            # user cart info
-            cart = current_user['cart']
-            images = session['update']['images']
-            
-            # find the furniture object the user has clicked on
-            index = request.form['id']
-            # delete items form array in session
-            cart.pop(int(index) -1 )
-            images.pop(int(index) - 1 )
-            
-            updated_cart = { 'cart': cart
-            
-            }
-            update_furniture = {'furniture_list': images}
-
-            print(update_furniture)
-            # update the users data with popped array values
-            user.update_one(
-            {'email': username}, {'$set': updated_cart})
-            user.update_one(
-            {'email': username}, {'$set': update_furniture})
-
-            new_data = user.find_one({'email': username})
-            data = {
-                    'username': new_data['email'],
-                    'id': new_data['_id'],
-                    'created': new_data['created_at'],
-                    'items': new_data['cart'],
-                    'ip': new_data['client_ip'],
-                    'cart_ammount': len(new_data['cart']),
-                    'images': new_data['furniture_list']
-                }
-            ammount = len(new_data['cart'])
-            
-            session['ammount'] = ammount
-            session['update'] = json.loads(json_util.dumps(data))
-            session['user'] = json.loads(json_util.dumps(data))
-            return jsonify({'result': 'success', 'id':index, 'cart_ammount': ammount})
-            
-        else:
             # inside session user
             print("user session")
             # get the username
