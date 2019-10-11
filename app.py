@@ -133,6 +133,7 @@ def index():
         }
         # log visitors ip address
         visitor.insert_one(data)
+        session['visitor'] = json.loads(json_util.dumps(data))
         # if there isnt a session return index
         return render_template('index.html')
 
@@ -306,8 +307,8 @@ def add():
         session['update'] = json.loads(json_util.dumps(data))
         session['user'] = json.loads(json_util.dumps(data))
         return jsonify({'result': 'success', 'cart_ammount': ammount})
-    else:
-        return 'wtf you looking for'
+    if request.method = 'GET':
+        return redirect(url_for('index'))
 
 
 @app.route('/delete', methods=['POST'])
@@ -358,8 +359,9 @@ def delete():
             session['user'] = json.loads(json_util.dumps(data))
             return jsonify({'result': 'success', 'id':index, 'cart_ammount': ammount})
 
-    else:
-        return 'what are you looking for'
+    if request.method = 'GET':
+        return redirect(url_for('index'))
+
 
 
 @app.route('/cart', methods=['GET'])
