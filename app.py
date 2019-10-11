@@ -307,8 +307,8 @@ def add():
         session['update'] = json.loads(json_util.dumps(data))
         session['user'] = json.loads(json_util.dumps(data))
         return jsonify({'result': 'success', 'cart_ammount': ammount})
-    if request.method = 'GET':
-        return redirect(url_for('index'))
+    else:
+        return 'wtf you looking for'
 
 
 @app.route('/delete', methods=['POST'])
@@ -359,9 +359,8 @@ def delete():
             session['user'] = json.loads(json_util.dumps(data))
             return jsonify({'result': 'success', 'id':index, 'cart_ammount': ammount})
 
-    if request.method = 'GET':
-        return redirect(url_for('index'))
-
+    else:
+        return 'what are you looking for'
 
 
 @app.route('/cart', methods=['GET'])
