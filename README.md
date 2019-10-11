@@ -17,7 +17,7 @@ Simple e-store.
 ## Running tests:
 
 -   Make sure the database is running in the background before running `python3 moretests.py`
--   To run tests.py make sure that you have the most updated version of Google Chrome, sleinium will run the chrome engine t virtually test the routes
+-   To run tests.py make sure that you have the most updated version of Google Chrome, sleinium will run the chrome engine virtually test the routes
 
 ## Optional:
 
